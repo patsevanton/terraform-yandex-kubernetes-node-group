@@ -1,7 +1,18 @@
+resource "yandex_iam_service_account" "sa-k8s-node-group" {
+  folder_id = var.folder_id
+  name      = "sa-k8s-node-group"
+}
+
+resource "yandex_resourcemanager_folder_iam_member" "sa-k8s-node-group-permissions" {
+  folder_id = var.folder_id
+  role      = "container-registry.images.puller"
+  member    = "serviceAccount:${yandex_iam_service_account.sa-k8s-node-group.id}"
+}
+
 resource "yandex_kubernetes_node_group" "k8s_node_group" {
   cluster_id  = var.cluster_id
   name        = var.pool_name
-  description = "pool for applications"
+  description = var.description
   version     = var.k8s_version
 
   labels = var.node_labels
@@ -29,7 +40,7 @@ resource "yandex_kubernetes_node_group" "k8s_node_group" {
     }
 
     scheduling_policy {
-      preemptible = false
+      preemptible = var.preemptible_enable
     }
 
     container_runtime {
@@ -37,9 +48,9 @@ resource "yandex_kubernetes_node_group" "k8s_node_group" {
     }
 
     metadata = {
-      ssh-keys           = templatefile("${path.module}/ssh-keys.tpl", {
-          ssh_keys_default    = var.ssh_keys_default, 
-          ssh_keys_additional = var.ssh_keys_additional
+      ssh-keys = templatefile("${path.module}/ssh-keys.tpl", {
+        ssh_keys_default    = var.ssh_keys_default,
+        ssh_keys_additional = var.ssh_keys_additional
         }
       )
       serial-port-enable = var.serial
@@ -66,8 +77,8 @@ resource "yandex_kubernetes_node_group" "k8s_node_group" {
   }
 
   maintenance_policy {
-    auto_upgrade = true
-    auto_repair  = true
+    auto_upgrade = var.auto_upgrade_enable
+    auto_repair  = var.auto_repair_enable
 
 
     maintenance_window {

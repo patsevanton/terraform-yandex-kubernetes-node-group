@@ -1,3 +1,7 @@
+variable "folder_id" {
+  type = string
+}
+
 variable "cluster_id" {
   type = string
 }
@@ -12,7 +16,7 @@ variable "cpu" {
 
 variable "cpu_type" {
   type    = string
-  default = "standard-v3" # "standard-v1" "standard-v2"
+  default = "standard-v3"
 }
 
 variable "disk" {
@@ -21,7 +25,7 @@ variable "disk" {
 
 variable "disk_type" {
   type    = string
-  default = "network-ssd" # network-ssd network-hdd
+  default = "network-ssd"
 }
 
 variable "num" {
@@ -69,7 +73,7 @@ variable "max_expansion" {
 variable "k8s_zone" {
   description = "Set zone"
   type        = list(string)
-  default     = ["ru-central1-a"]
+  default     = ["ru-central1-b"]
 }
 
 
@@ -120,12 +124,27 @@ variable "ssh_keys_default" {
 }
 
 variable "ssh_keys_additional" {
-  type = list(string)
-  default = []
+  type        = list(string)
+  default     = []
   description = "cloud-config additional ssh keys"
 }
 
 variable "container_runtime" {
   type    = string
   default = "containerd"
+}
+
+variable "description" {
+  type = string
+}
+
+variable "preemptible_enable" {
+  type = bool
+}
+
+variable "auto_upgrade_enable" {
+  type = bool
+}
+variable "auto_repair_enable" {
+  type = bool
 }
