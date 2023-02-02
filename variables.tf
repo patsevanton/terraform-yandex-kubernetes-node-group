@@ -1,90 +1,104 @@
-variable "zone" {
-  type        = string
-  default     = null
-  description = "Zone of yandex cloud"
-}
-
-variable "cloud_id" {
-  type    = string
-  default = null
-}
-
-variable "folder_id" {
+variable "cluster_id" {
   type = string
 }
 
-variable "cluster_id" {
-  type    = string
-  default = null
+variable "memory" {
+  type = number
 }
 
-variable "cilium" {
-  type    = bool
-  default = false
-}
-variable "service_account_id" {
-  type    = string
-  default = null
+variable "cpu" {
+  type = number
 }
 
-variable "node_service_account_id" {
+variable "cpu_type" {
   type    = string
-  default = null
+  default = "standard-v3" # "standard-v1" "standard-v2"
 }
 
-variable "version_k8s" {
-  type    = string
-  default = "1.23"
+variable "disk" {
+  type = number
 }
 
-variable "k8s_name" {
+variable "disk_type" {
   type    = string
-  default = null
+  default = "network-ssd" # network-ssd network-hdd
 }
 
-variable "ip_subnet" {
+variable "num" {
+  type        = number
+  description = "Number of nodes"
+  default     = 1
+}
+
+variable "max_num" {
+  type        = number
+  description = "Number of nodes"
+  default     = 1
+}
+
+variable "k8s_version" {
+  type        = string
+  description = "Version of nodes"
+}
+
+variable "pool_name" {
+  type        = string
+  description = "Pool node name"
+}
+
+variable "subnet_id" {
   type    = list(string)
   default = null
 }
 
-variable "network_id" {
+variable "nat" {
   type    = string
-  default = null
+  default = false
 }
 
-variable "subnet_id" {
-  type    = string
-  default = null
+variable "max_unavailable" {
+  type    = number
+  default = 0
 }
 
-variable "cluster_ipv4_range" {
-  type    = string
-  default = "10.1.0.0/16"
+variable "max_expansion" {
+  type    = number
+  default = 2
 }
 
-variable "service_ipv4_range" {
-  type    = string
-  default = "10.2.0.0/16"
+variable "k8s_zone" {
+  description = "Set zone"
+  type        = list(string)
+  default     = ["ru-central1-a"]
 }
 
-variable "release_channel" {
-  type    = string
-  default = "STABLE"
+
+variable "node_taints" {
+  description = "List taint rules"
+  type        = list(string)
+  default     = []
 }
 
-variable "public_ip" {
-  type    = bool
-  default = true
+variable "maintenance_window_day" {
+  type    = string
+  default = "saturday"
 }
 
-variable "cluster_name" {
+variable "maintenance_window_start_time" {
   type    = string
-  default = "test"
+  default = "03:00"
 }
 
-variable "node_ipv4_cidr_mask_size" {
+variable "maintenance_window_duration" {
   type    = string
-  default = "24"
+  default = "2h00m"
+}
+
+variable "node_labels" {
+  type = map(string)
+  default = {
+    "failure-domain.beta.kubernetes.io/region" = "yandex"
+  }
 }
 
 variable "security_group_ids" {
@@ -93,37 +107,25 @@ variable "security_group_ids" {
   description = "List of attached security groups id"
 }
 
-variable "cluster_type" {
-  type    = string
-  default = "zonal"
+### cloud-config
+variable "serial" {
+  type        = string
+  default     = "0"
+  description = "Serial console"
 }
 
-variable "zone_a_subnet_id" {
-  type    = string
-  default = null
+variable "ssh_keys_default" {
+  type        = list(string)
+  description = "cloud-config ssh keys"
 }
 
-variable "zone_b_subnet_id" {
-  type    = string
-  default = null
+variable "ssh_keys_additional" {
+  type = list(string)
+  default = []
+  description = "cloud-config additional ssh keys"
 }
 
-variable "zone_c_subnet_id" {
+variable "container_runtime" {
   type    = string
-  default = null
-}
-
-variable "auto_upgrade_enable" {
-  type    = bool
-  default = true
-}
-
-variable "maintenance_window_start_time" {
-  type    = string
-  default = "00:00"
-}
-
-variable "maintenance_window_duration" {
-  type    = string
-  default = "3h"
+  default = "containerd"
 }
