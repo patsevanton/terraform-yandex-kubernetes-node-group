@@ -145,6 +145,27 @@ variable "preemptible_enable" {
 variable "auto_upgrade_enable" {
   type = bool
 }
+
 variable "auto_repair_enable" {
   type = bool
+}
+
+variable "node_group_name" {
+  default = ""
+}
+
+variable "platform_id" {
+  default = ""
+}
+
+variable "nat_enable" {
+  default = ""
+}
+
+variable "disk_size" {
+  default = ""
+}
+
+variable "core_fraction" {
+  default = ""
 }

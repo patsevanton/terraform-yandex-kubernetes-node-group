@@ -11,7 +11,7 @@ resource "yandex_resourcemanager_folder_iam_member" "sa-k8s-node-group-permissio
 
 resource "yandex_kubernetes_node_group" "k8s_node_group" {
   cluster_id  = var.cluster_id
-  name        = var.pool_name
+  name        = var.node_group_name
   description = var.description
   version     = var.k8s_version
 
@@ -20,23 +20,23 @@ resource "yandex_kubernetes_node_group" "k8s_node_group" {
   node_labels = var.node_labels
 
   instance_template {
-    platform_id = var.cpu_type
+    platform_id = var.platform_id
 
     network_interface {
-      nat                = var.nat
-      subnet_ids         = var.subnet_id
-      security_group_ids = var.security_group_ids
+      nat        = var.nat_enable
+      subnet_ids = [var.subnet_id]
     }
 
 
     resources {
-      memory = var.memory
-      cores  = var.cpu
+      cores         = var.memory
+      memory        = var.cpu
+      core_fraction = var.core_fraction
     }
 
     boot_disk {
       type = var.disk_type
-      size = var.disk
+      size = var.disk_size
     }
 
     scheduling_policy {
@@ -48,21 +48,14 @@ resource "yandex_kubernetes_node_group" "k8s_node_group" {
     }
 
     metadata = {
-      ssh-keys = templatefile("${path.module}/ssh-keys.tpl", {
-        ssh_keys_default    = var.ssh_keys_default,
-        ssh_keys_additional = var.ssh_keys_additional
-        }
-      )
-      serial-port-enable = var.serial
+      ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
     }
 
   }
 
   scale_policy {
-    auto_scale {
-      min     = var.num
-      max     = var.max_num
-      initial = var.num
+    fixed_scale {
+      size = 1
     }
   }
 
