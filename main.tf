@@ -1,62 +1,67 @@
-resource "yandex_iam_service_account" "twoingress-k8s-node-group" {
-  folder_id = var.folder_id
-  name      = "twoingress-k8s-node-group"
-}
+resource "yandex_kubernetes_node_group" "k8s_node_group" {
+  cluster_id  = var.cluster_id
+  name        = var.pool_name
+  description = "pool for applications"
+  version     = var.k8s_version
 
-resource "yandex_resourcemanager_folder_iam_member" "twoingress-k8s-node-group-permissions" {
-  folder_id = var.folder_id
-  role      = "container-registry.images.puller"
-  member    = "serviceAccount:${yandex_iam_service_account.twoingress-k8s-node-group.id}"
-}
+  labels = var.node_labels
 
-resource "yandex_kubernetes_node_group" "twoingress-k8s-node-group" {
-  cluster_id  = yandex_kubernetes_cluster.twoingress_k8s_cluster.id
-  name        = "twoingress-k8s-node-group"
-  description = "twoingress-k8s-node-group"
-  version     = "1.23"
-
-  labels = {
-    "key" = "value"
-  }
+  node_labels = var.node_labels
 
   instance_template {
-    platform_id = "standard-v3"
+    platform_id = var.cpu_type
 
     network_interface {
-      nat        = true
-      subnet_ids = [data.yandex_vpc_subnet.default-ru-central1-a.id]
+      nat                = var.nat
+      subnet_ids         = var.subnet_id
+      security_group_ids = var.security_group_ids
     }
 
+
     resources {
-      cores         = 4
-      memory        = 8
-      core_fraction = 100
+      memory = var.memory
+      cores  = var.cpu
     }
 
     boot_disk {
-      type = "network-ssd"
-      size = 100
+      type = var.disk_type
+      size = var.disk
     }
 
     scheduling_policy {
-      preemptible = true
+      preemptible = false
+    }
+
+    container_runtime {
+      type = var.container_runtime
     }
 
     metadata = {
-      ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
+      ssh-keys           = templatefile("${path.module}/ssh-keys.tpl", {
+          ssh_keys_default    = var.ssh_keys_default, 
+          ssh_keys_additional = var.ssh_keys_additional
+        }
+      )
+      serial-port-enable = var.serial
     }
 
   }
 
   scale_policy {
-    fixed_scale {
-      size = 1
+    auto_scale {
+      min     = var.num
+      max     = var.max_num
+      initial = var.num
     }
   }
 
   allocation_policy {
-    location {
-      zone = data.yandex_vpc_subnet.default-ru-central1-a.zone
+    dynamic "location" {
+      for_each = var.k8s_zone
+      content {
+        zone = location.value
+      }
+
     }
   }
 
@@ -64,16 +69,17 @@ resource "yandex_kubernetes_node_group" "twoingress-k8s-node-group" {
     auto_upgrade = true
     auto_repair  = true
 
-    maintenance_window {
-      day        = "monday"
-      start_time = "15:00"
-      duration   = "3h"
-    }
 
     maintenance_window {
-      day        = "friday"
-      start_time = "10:00"
-      duration   = "4h30m"
+      day        = var.maintenance_window_day
+      start_time = var.maintenance_window_start_time
+      duration   = var.maintenance_window_duration
     }
   }
+  deploy_policy {
+    max_unavailable = var.max_unavailable
+    max_expansion   = var.max_expansion
+  }
+
+  node_taints = var.node_taints
 }
