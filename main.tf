@@ -29,8 +29,8 @@ resource "yandex_kubernetes_node_group" "k8s_node_group" {
 
 
     resources {
-      cores         = var.memory
-      memory        = var.cpu
+      cores         = var.cpu
+      memory        = var.memory
       core_fraction = var.core_fraction
     }
 
