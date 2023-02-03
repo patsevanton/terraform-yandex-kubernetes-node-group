@@ -50,7 +50,7 @@ variable "pool_name" {
   description = "Pool node name"
 }
 
-variable "subnet_id" {
+variable "subnet_ids" {
   type    = list(string)
   default = null
 }
