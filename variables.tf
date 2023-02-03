@@ -147,7 +147,8 @@ variable "auto_upgrade_enable" {
 }
 
 variable "auto_repair_enable" {
-  type = bool
+  type    = bool
+  default = true
 }
 
 variable "node_group_name" {
@@ -155,17 +156,21 @@ variable "node_group_name" {
 }
 
 variable "platform_id" {
-  default = ""
+  type    = string
+  default = "standard-v3"
 }
 
 variable "nat_enable" {
-  default = ""
+  type    = bool
+  default = true
 }
 
 variable "disk_size" {
-  default = ""
+  type    = number
+  default = 30
 }
 
 variable "core_fraction" {
-  default = ""
+  type    = number
+  default = 50
 }
