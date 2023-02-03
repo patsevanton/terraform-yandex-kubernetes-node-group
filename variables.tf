@@ -118,16 +118,16 @@ variable "serial" {
   description = "Serial console"
 }
 
-variable "ssh_keys_default" {
-  type        = list(string)
-  description = "cloud-config ssh keys"
-}
-
-variable "ssh_keys_additional" {
-  type        = list(string)
-  default     = []
-  description = "cloud-config additional ssh keys"
-}
+#variable "ssh_keys_default" {
+#  type        = list(string)
+#  description = "cloud-config ssh keys"
+#}
+#
+#variable "ssh_keys_additional" {
+#  type        = list(string)
+#  default     = []
+#  description = "cloud-config additional ssh keys"
+#}
 
 variable "container_runtime" {
   type    = string
