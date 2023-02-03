@@ -7,11 +7,13 @@ variable "cluster_id" {
 }
 
 variable "memory" {
-  type = number
+  type    = number
+  default = 8
 }
 
 variable "cpu" {
-  type = number
+  type    = number
+  default = 4
 }
 
 variable "cpu_type" {
