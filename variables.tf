@@ -135,15 +135,18 @@ variable "container_runtime" {
 }
 
 variable "description" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "preemptible_enable" {
-  type = bool
+  type    = bool
+  default = true
 }
 
 variable "auto_upgrade_enable" {
-  type = bool
+  type    = bool
+  default = true
 }
 
 variable "auto_repair_enable" {
