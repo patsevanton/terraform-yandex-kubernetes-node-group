@@ -1,14 +1,3 @@
-resource "yandex_iam_service_account" "sa-k8s-node-group" {
-  folder_id = var.folder_id
-  name      = "sa-k8s-node-group"
-}
-
-resource "yandex_resourcemanager_folder_iam_member" "sa-k8s-node-group-permissions" {
-  folder_id = var.folder_id
-  role      = "container-registry.images.puller"
-  member    = "serviceAccount:${yandex_iam_service_account.sa-k8s-node-group.id}"
-}
-
 resource "yandex_kubernetes_node_group" "k8s_node_group" {
   cluster_id  = var.cluster_id
   name        = var.node_group_name
