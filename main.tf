@@ -13,7 +13,7 @@ resource "yandex_kubernetes_node_group" "k8s_node_group" {
 
     network_interface {
       nat        = var.nat_enable
-      subnet_ids = var.subnet_ids
+      subnet_ids = var.subnet_id
     }
 
 
